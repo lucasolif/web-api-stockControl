@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
-public record ProductRequest(
+public record ProductUpdateRequest(
         @NotNull Long code,
         @NotBlank String name,
         @NotNull BigDecimal price

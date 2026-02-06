@@ -1,12 +1,13 @@
 package br.com.autoflex.mapper;
 
-import lombok.Builder;
-import lombok.Data;
+import br.com.autoflex.dto.ProductRequest;
 
-import br.com.autoflex.dto.MaterialItemResponse;
+import br.com.autoflex.dto.RawMaterialRequest;
+import br.com.autoflex.dto.RawMaterialResponse;
 import br.com.autoflex.dto.ProductResponse;
 import br.com.autoflex.entity.Product;
 import br.com.autoflex.entity.ProductRawMaterial;
+import br.com.autoflex.entity.RawMaterial;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -24,26 +25,39 @@ public class ProductMapper {
             productEntity.getId(),
             productEntity.getCode(),
             productEntity.getName(),
-            productEntity.getUnitPrice(),
-            mapProductRawMaterialToResponse(productEntity.getRawMaterials())
+            productEntity.getUnitPrice()
         );
     }
 
-    private List<MaterialItemResponse> mapProductRawMaterialToResponse(Set<ProductRawMaterial> prodRawMat) {
-        if (prodRawMat == null || prodRawMat.isEmpty()) return Collections.emptyList();
-
-        return prodRawMat.stream()
-            .filter(Objects::nonNull)
-            .map(this::productRawMaterialToResponse)
-            .collect(Collectors.toList());
+    public RawMaterialResponse productRawMaterialToResponse(RawMaterial rawMat) {
+        return new RawMaterialResponse(
+                rawMat.getId(),
+                rawMat.getCode(),
+                rawMat.getName(),
+                rawMat.getStockQuantity()
+        );
     }
 
-    private MaterialItemResponse productRawMaterialToResponse(ProductRawMaterial prm) {
-        return new MaterialItemResponse(
-            prm.getRawMaterial().getId(),
-            prm.getRawMaterial().getCode(),
-            prm.getRawMaterial().getName(),
-            prm.getQuantityRequired()
-        );
+    public Product productRequestToEntity(ProductRequest productRequest){
+
+        if (productRequest == null) return null;
+
+        Product product = new Product();
+        product.setCode(productRequest.code());
+        product.setName(productRequest.name());
+        product.setUnitPrice(productRequest.price());
+
+        return product;
+    }
+
+    public RawMaterial productRawMaterialToEntity(RawMaterialRequest rawMatReq) {
+
+        RawMaterial rawMaterial = new RawMaterial();
+        rawMaterial.setId(rawMatReq.id());
+        rawMaterial.setCode(rawMatReq.code());
+        rawMaterial.setName(rawMatReq.name());
+        rawMaterial.setStockQuantity(rawMatReq.stockQuantity());
+
+        return  rawMaterial;
     }
 }
