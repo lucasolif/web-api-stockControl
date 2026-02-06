@@ -24,9 +24,6 @@ public class Product {
     @Column(name = "unit_price", nullable = false, precision = 15, scale = 2)
     private BigDecimal unitPrice;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ProductRawMaterial> rawMaterials = new HashSet<>();
-
 
     public long getId() {
         return id;
@@ -54,13 +51,6 @@ public class Product {
     }
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
-    }
-
-    public Set<ProductRawMaterial> getRawMaterials() {
-        return rawMaterials;
-    }
-    public void setRawMaterials(Set<ProductRawMaterial> rawMaterials) {
-        this.rawMaterials = rawMaterials;
     }
 
 
