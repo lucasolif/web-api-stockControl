@@ -12,12 +12,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api/product")
 public class ProductController {
 
     private final ProductService productService;
@@ -33,24 +32,27 @@ public class ProductController {
         return ResponseEntity.ok(page);
     }
 
-    @Transactional(readOnly = true)
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> getById(@PathVariable Long id) {
-        ProductResponse dto = productService.getById(id);
-        return ResponseEntity.ok(dto);
+        ProductResponse product = productService.getById(id);
+        return ResponseEntity.ok(product);
     }
 
-    @Transactional
     @PostMapping
     public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest productRequest){
         ProductResponse response = productService.saveProduct(productRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> update(@PathVariable Long id, @Valid @RequestBody ProductUpdateRequest productUpdate){
         ProductResponse updateProduct = productService.updateProduct(id, productUpdate);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(updateProduct);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ProductResponse> delete(@PathVariable Long id){
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
     }
 }
