@@ -1,40 +1,42 @@
 package br.com.autoflex.mapper;
 
+import br.com.autoflex.dto.ProductRawMaterialResponse;
 import br.com.autoflex.dto.ProductRequest;
 
-import br.com.autoflex.dto.RawMaterialRequest;
-import br.com.autoflex.dto.RawMaterialResponse;
 import br.com.autoflex.dto.ProductResponse;
+import br.com.autoflex.dto.RawMaterialResponse;
 import br.com.autoflex.entity.Product;
-import br.com.autoflex.entity.ProductRawMaterial;
+
 import br.com.autoflex.entity.RawMaterial;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Component
 public class ProductMapper {
 
     public ProductResponse productToResponse(Product productEntity) {
+
+        if (productEntity == null) return null;
+
+        List<ProductRawMaterialResponse> rawMaterials = productEntity.getRawMaterials() == null
+                ? List.of()
+                : productEntity.getRawMaterials().stream()
+                .map(prm -> new ProductRawMaterialResponse(
+                        prm.getRawMaterial().getId(),
+                        prm.getRawMaterial().getCode(),
+                        prm.getRawMaterial().getName(),
+                        prm.getQuantityRequired()
+                ))
+                .toList();
+
         return new ProductResponse(
             productEntity.getId(),
             productEntity.getCode(),
             productEntity.getName(),
-            productEntity.getUnitPrice()
-        );
-    }
-
-    public RawMaterialResponse productRawMaterialToResponse(RawMaterial rawMat) {
-        return new RawMaterialResponse(
-                rawMat.getId(),
-                rawMat.getCode(),
-                rawMat.getName(),
-                rawMat.getStockQuantity()
+            productEntity.getUnitPrice(),
+            rawMaterials
         );
     }
 
@@ -50,14 +52,13 @@ public class ProductMapper {
         return product;
     }
 
-    public RawMaterial productRawMaterialToEntity(RawMaterialRequest rawMatReq) {
+    public List<ProductResponse> EntityListToProductResponse(List<Product> products) {
+        if (products == null || products.isEmpty()) {
+            return List.of();
+        }
 
-        RawMaterial rawMaterial = new RawMaterial();
-        rawMaterial.setId(rawMatReq.id());
-        rawMaterial.setCode(rawMatReq.code());
-        rawMaterial.setName(rawMatReq.name());
-        rawMaterial.setStockQuantity(rawMatReq.stockQuantity());
-
-        return  rawMaterial;
+        return products.stream()
+                .map(this::productToResponse)
+                .toList();
     }
 }
