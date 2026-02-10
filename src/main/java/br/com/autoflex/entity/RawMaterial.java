@@ -13,15 +13,15 @@ public class RawMaterial {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "code", nullable = false)
-    private long code;
+    private Long code;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "stock_quantity", nullable = false)
+    @Column(name = "stock_quantity", nullable = false, scale = 2)
     private BigDecimal stockQuantity;
 
 
@@ -29,7 +29,7 @@ public class RawMaterial {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -37,7 +37,7 @@ public class RawMaterial {
         return code;
     }
 
-    public void setCode(long code) {
+    public void setCode(Long code) {
         this.code = code;
     }
 

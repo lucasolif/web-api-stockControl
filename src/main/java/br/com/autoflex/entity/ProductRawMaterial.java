@@ -11,7 +11,7 @@ public class ProductRawMaterial {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
@@ -21,7 +21,7 @@ public class ProductRawMaterial {
     @JoinColumn(name = "raw_material_id", nullable = false)
     private RawMaterial rawMaterial;
 
-    @Column(nullable = false, precision = 18, scale = 4)
+    @Column(name = "quantity_required", nullable = false, precision = 18, scale = 2)
     private BigDecimal quantityRequired;
 
 
@@ -29,7 +29,7 @@ public class ProductRawMaterial {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

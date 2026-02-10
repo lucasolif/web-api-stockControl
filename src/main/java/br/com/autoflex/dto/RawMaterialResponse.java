@@ -8,8 +8,8 @@ import jakarta.persistence.Id;
 import java.math.BigDecimal;
 
 public record RawMaterialResponse(
-        long id,
-        long code,
+        Long id,
+        Long code,
         String name,
         BigDecimal stockQuantity
 ) {}
