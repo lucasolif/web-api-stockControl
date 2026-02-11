@@ -5,9 +5,12 @@ import br.com.autoflex.dto.RawMaterialRequest;
 import br.com.autoflex.dto.RawMaterialResponse;
 import br.com.autoflex.dto.RawMaterialUpdateRequest;
 import br.com.autoflex.entity.RawMaterial;
+import br.com.autoflex.exception.ConflictException;
+import br.com.autoflex.exception.ResourceInUseException;
 import br.com.autoflex.exception.ResourceNotFoundException;
 import br.com.autoflex.mapper.RawMaterialMapper;
 import br.com.autoflex.repository.RawMaterialRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,13 +40,13 @@ public class RawMaterialService {
 
     @Transactional(readOnly = true)
     public RawMaterialResponse getById(Long id) {
-        RawMaterial rawMaterial = rawMaterialRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Raw Material not found"));
+        RawMaterial rawMaterial = rawMaterialRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Matéria prima não encontrada"));
         return rawMaterialMapper.rawMaterialToResponse(rawMaterial);
     }
 
     @Transactional(readOnly = true)
     public RawMaterial getEntityById(Long id) {
-        return rawMaterialRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Raw Material not found"));
+        return rawMaterialRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Matéria prima não encontrada"));
     }
 
     @Transactional
@@ -66,7 +69,7 @@ public class RawMaterialService {
 
     @Transactional
     public RawMaterialResponse updateRawMaterial(Long id, RawMaterialUpdateRequest rawMatRequest){
-        RawMaterial existingRawMat = rawMaterialRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Raw Material not found"));
+        RawMaterial existingRawMat = rawMaterialRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Matéria prima não encontrada"));
 
         existingRawMat.setName(rawMatRequest.name());
         existingRawMat.setCode(rawMatRequest.code());
@@ -78,8 +81,14 @@ public class RawMaterialService {
 
     @Transactional
     public void deleteRawMaterial(Long id){
-        RawMaterial existingRawMat = rawMaterialRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Raw Material not found"));
-        rawMaterialRepository.delete(existingRawMat);
+        RawMaterial existingRawMat = rawMaterialRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Matéria prima não encontrada"));
+
+        try {
+            rawMaterialRepository.delete(existingRawMat);
+            rawMaterialRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("Não é possível excluir: a matéria-prima está sendo utilizada por um ou mais produtos.");
+        }
     }
 
 }

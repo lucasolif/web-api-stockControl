@@ -43,7 +43,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ProductResponse getById(Long id) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
         return productMapper.productToResponse(product);
     }
 
@@ -66,7 +66,7 @@ public class ProductService {
     @Transactional
     public ProductResponse updateProduct(Long id, ProductUpdateRequest productRequest){
         try{
-            Product existingProd = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+            Product existingProd = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
             existingProd.setName(productRequest.name());
             existingProd.setCode(productRequest.code());
             existingProd.setUnitPrice(productRequest.price());
@@ -83,7 +83,7 @@ public class ProductService {
 
     @Transactional
     public void deleteProduct(Long id){
-        Product existingProd = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        Product existingProd = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
         productRepository.delete(existingProd);
     }
 
@@ -107,7 +107,7 @@ public class ProductService {
     private List<ProductRawMaterial> buildMaterialsList(Product product, List<ProductRawMaterialRequest> prodRawMat) {
 
         if (prodRawMat == null || prodRawMat.isEmpty()) {
-            throw new BusinessException("Product must have at least one raw material");
+            throw new BusinessException("O produto deve conter pelo menos uma matéria-prima.");
         }
 
         Set<Long> usedRawIds = new HashSet<>();
@@ -116,10 +116,10 @@ public class ProductService {
         for (ProductRawMaterialRequest item : prodRawMat) {
 
             if (item.rawMaterialId() == null || item.quantityRequired() == null || item.quantityRequired().signum() <= 0) {
-                throw new BusinessException("Raw material cannot be null");
+                throw new BusinessException("Não foi informado a matéria prima");
             }
             if (!usedRawIds.add(item.rawMaterialId())) {
-                throw new IllegalArgumentException("Duplicate id in request: " + item.rawMaterialId());
+                throw new IllegalArgumentException("Matéria prima duplicadas: " + item.rawMaterialId());
             }
 
             RawMaterial rm = rawMaterialService.getEntityById(item.rawMaterialId());
