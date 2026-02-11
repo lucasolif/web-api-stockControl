@@ -111,15 +111,6 @@ GET /api/production/suggestion
 git clone https://github.com/seu-usuario/autoflex-api.git
 ```
 
-### 2. Configure variáveis de ambiente
-
-Exemplo:
-
-```
-JWT_SECRET=sua_chave_super_segura
-SPRING_PROFILES_ACTIVE=dev
-```
-
 ### 3. Execute o backend
 
 ```bash
@@ -129,7 +120,7 @@ mvn spring-boot:run
 API disponível em:
 
 ```
-http://localhost:8080/autoflex/api
+http://localhost:8080/autoflex
 ```
 
 ---
@@ -158,8 +149,6 @@ src/
  │   │   └── br.com.autoflex
  │   └── resources/
  │       ├── application.properties
- │       ├── application-dev.properties
- │       └── application-prod.properties
 ```
 
 ---
