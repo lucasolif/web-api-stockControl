@@ -14,14 +14,13 @@ O sistema permite controlar insumos, cadastrar produtos, associar matérias-prim
 * Spring Security + JWT (autenticação stateless)
 * Spring Data JPA / Hibernate
 * Maven
-* Banco relacional (ex.: MySQL / SQL Server)
+* Banco relacional (MySQL)
 
 ### Frontend
 
 * Angular
-* Bootstrap / CSS
-* Interceptor HTTP para autenticação JWT
-
+* Angular Material
+  
 ---
 
 ## 🔐 Segurança
