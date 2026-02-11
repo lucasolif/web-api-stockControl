@@ -156,7 +156,6 @@ src/
 
 * Arquitetura RESTful
 * Separação front/back
-* Configuração por profiles (dev/prod)
 * Externalização de secrets
 * Segurança stateless
 * Clean code e organização modular
