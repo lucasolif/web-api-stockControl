@@ -16,20 +16,6 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    //ERROR 404
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorApi> handleNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
-        ErrorApi body = new ErrorApi(
-                Instant.now(),
-                HttpStatus.NOT_FOUND.value(),
-                HttpStatus.NOT_FOUND.getReasonPhrase(),
-                ex.getMessage(),
-                request.getRequestURI(),
-                null
-        );
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
-    }
-
     //ERROR 400
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorApi> handleBusiness(BusinessException ex, HttpServletRequest request) {
@@ -42,6 +28,28 @@ public class GlobalExceptionHandler {
                 null
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+    }
+
+    //ERROR 400 - Para erros de validações (Beans de validações)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorApi> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
+
+        List<ErrorApi.FieldViolation> fieldErrors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(this::toViolation)
+                .toList();
+
+        ErrorApi body = new ErrorApi(
+                Instant.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                "Validation error",
+                request.getRequestURI(),
+                fieldErrors
+        );
+
+        return ResponseEntity.badRequest().body(body);
     }
 
     //ERRO 401
@@ -76,26 +84,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
     }
 
-    //ERROR 400 - Para erros de validações (Beans de validações)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorApi> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
-
-        List<ErrorApi.FieldViolation> fieldErrors = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(this::toViolation)
-                .toList();
-
+    //ERROR 404
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorApi> handleNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
         ErrorApi body = new ErrorApi(
                 Instant.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                "Validation error",
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage(),
                 request.getRequestURI(),
-                fieldErrors
+                null
         );
-
-        return ResponseEntity.badRequest().body(body);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
     }
 
     //ERROR 409
